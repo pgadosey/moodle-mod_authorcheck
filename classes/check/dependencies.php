@@ -15,9 +15,11 @@
 // along with Moodle.  If not, see <https://www.gnu.org/licenses/>.
 
 /**
+ * Dependency status check for the Authorship Check plugin.
+ *
  * @package    mod_authorcheck
  * @copyright  2026 Pius Kwao Gadosey <kwaoproj@gmail.com>
- * @license    https://www.gnu.org/licenses/gpl-3.0 GNU GPL v3 or later
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 namespace mod_authorcheck\check;
 
@@ -28,11 +30,16 @@ use core\check\result;
  * Checks that pdftotext and pandoc are available on the server.
  */
 class dependencies extends check {
-
+    /**
+     * Return the check display name.
+     */
     public function get_name(): string {
         return get_string('check:dependencies', 'mod_authorcheck');
     }
 
+    /**
+     * Run the check and return the result.
+     */
     public function get_result(): result {
         $missing = [];
         foreach (['pdftotext', 'pandoc'] as $cmd) {
@@ -42,14 +49,22 @@ class dependencies extends check {
         }
 
         if (empty($missing)) {
-            return new result(result::OK,
-                get_string('check:dependencies:ok', 'mod_authorcheck'), '');
+            return new result(
+                result::OK,
+                get_string('check:dependencies:ok', 'mod_authorcheck'),
+                ''
+            );
         }
 
-        return new result(result::ERROR,
+        return new result(
+            result::ERROR,
             get_string('check:dependencies:missing', 'mod_authorcheck'),
-            get_string('check:dependencies:missingdetails', 'mod_authorcheck',
-                implode(', ', $missing)));
+            get_string(
+                'check:dependencies:missingdetails',
+                'mod_authorcheck',
+                implode(', ', $missing)
+            )
+        );
     }
 
     /**

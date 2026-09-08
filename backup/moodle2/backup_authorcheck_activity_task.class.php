@@ -15,9 +15,11 @@
 // along with Moodle.  If not, see <https://www.gnu.org/licenses/>.
 
 /**
+ * Backup task for the Authorship Check activity.
+ *
  * @package    mod_authorcheck
  * @copyright  2026 Pius Kwao Gadosey <kwaoproj@gmail.com>
- * @license    https://www.gnu.org/licenses/gpl-3.0 GNU GPL v3 or later
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 defined('MOODLE_INTERNAL') || die();
 
@@ -27,14 +29,21 @@ require_once($CFG->dirroot . '/mod/authorcheck/backup/moodle2/backup_authorcheck
  * Backup task that provides the steps to back up an authorcheck activity.
  */
 class backup_authorcheck_activity_task extends backup_activity_task {
-
+    /**
+     * Define plugin-specific settings.
+     */
     protected function define_my_settings() {
         // No activity-specific settings.
     }
 
+    /**
+     * Define the backup steps.
+     */
     protected function define_my_steps() {
         $this->add_step(new backup_authorcheck_activity_structure_step(
-            'authorcheck_structure', 'authorcheck.xml'));
+            'authorcheck_structure',
+            'authorcheck.xml'
+        ));
     }
 
     /**
@@ -51,12 +60,16 @@ class backup_authorcheck_activity_task extends backup_activity_task {
         // Link to the activity index within a course.
         $content = preg_replace(
             "/(" . $base . "\/mod\/authorcheck\/index.php\?id=)([0-9]+)/",
-            '$@AUTHORCHECKINDEX*$2@$', $content);
+            '$@AUTHORCHECKINDEX*$2@$',
+            $content
+        );
 
         // Link to a specific activity view.
         $content = preg_replace(
             "/(" . $base . "\/mod\/authorcheck\/view.php\?id=)([0-9]+)/",
-            '$@AUTHORCHECKVIEWBYID*$2@$', $content);
+            '$@AUTHORCHECKVIEWBYID*$2@$',
+            $content
+        );
 
         return $content;
     }

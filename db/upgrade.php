@@ -15,9 +15,11 @@
 // along with Moodle.  If not, see <https://www.gnu.org/licenses/>.
 
 /**
+ * Upgrade steps for mod_authorcheck.
+ *
  * @package    mod_authorcheck
  * @copyright  2026 Pius Kwao Gadosey <kwaoproj@gmail.com>
- * @license    https://www.gnu.org/licenses/gpl-3.0 GNU GPL v3 or later
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 defined('MOODLE_INTERNAL') || die();
 
@@ -33,17 +35,32 @@ function xmldb_authorcheck_upgrade($oldversion) {
 
     // Add release-control fields to the activity table.
     if ($oldversion < 2026082001) {
-
         $table = new xmldb_table('authorcheck');
 
-        $releasetime = new xmldb_field('releasetime', XMLDB_TYPE_INTEGER, '10', null,
-            XMLDB_NOTNULL, null, '0', 'introformat');
+        $releasetime = new xmldb_field(
+            'releasetime',
+            XMLDB_TYPE_INTEGER,
+            '10',
+            null,
+            XMLDB_NOTNULL,
+            null,
+            '0',
+            'introformat'
+        );
         if (!$dbman->field_exists($table, $releasetime)) {
             $dbman->add_field($table, $releasetime);
         }
 
-        $manualreleased = new xmldb_field('manualreleased', XMLDB_TYPE_INTEGER, '1', null,
-            XMLDB_NOTNULL, null, '0', 'releasetime');
+        $manualreleased = new xmldb_field(
+            'manualreleased',
+            XMLDB_TYPE_INTEGER,
+            '1',
+            null,
+            XMLDB_NOTNULL,
+            null,
+            '0',
+            'releasetime'
+        );
         if (!$dbman->field_exists($table, $manualreleased)) {
             $dbman->add_field($table, $manualreleased);
         }
@@ -53,19 +70,34 @@ function xmldb_authorcheck_upgrade($oldversion) {
 
     // Add attempt-limit fields.
     if ($oldversion < 2026082002) {
-
         // maxattempts on the activity.
         $table = new xmldb_table('authorcheck');
-        $maxattempts = new xmldb_field('maxattempts', XMLDB_TYPE_INTEGER, '2', null,
-            XMLDB_NOTNULL, null, '1', 'manualreleased');
+        $maxattempts = new xmldb_field(
+            'maxattempts',
+            XMLDB_TYPE_INTEGER,
+            '2',
+            null,
+            XMLDB_NOTNULL,
+            null,
+            '1',
+            'manualreleased'
+        );
         if (!$dbman->field_exists($table, $maxattempts)) {
             $dbman->add_field($table, $maxattempts);
         }
 
         // attemptsused on each student's attempt row.
         $attemptstable = new xmldb_table('authorcheck_attempts');
-        $attemptsused = new xmldb_field('attemptsused', XMLDB_TYPE_INTEGER, '4', null,
-            XMLDB_NOTNULL, null, '0', 'status');
+        $attemptsused = new xmldb_field(
+            'attemptsused',
+            XMLDB_TYPE_INTEGER,
+            '4',
+            null,
+            XMLDB_NOTNULL,
+            null,
+            '0',
+            'status'
+        );
         if (!$dbman->field_exists($attemptstable, $attemptsused)) {
             $dbman->add_field($attemptstable, $attemptsused);
         }
@@ -75,10 +107,17 @@ function xmldb_authorcheck_upgrade($oldversion) {
 
     // Add the flag threshold (percent) to the activity.
     if ($oldversion < 2026082003) {
-
         $table = new xmldb_table('authorcheck');
-        $flagthreshold = new xmldb_field('flagthreshold', XMLDB_TYPE_INTEGER, '3', null,
-            XMLDB_NOTNULL, null, '50', 'maxattempts');
+        $flagthreshold = new xmldb_field(
+            'flagthreshold',
+            XMLDB_TYPE_INTEGER,
+            '3',
+            null,
+            XMLDB_NOTNULL,
+            null,
+            '50',
+            'maxattempts'
+        );
         if (!$dbman->field_exists($table, $flagthreshold)) {
             $dbman->add_field($table, $flagthreshold);
         }
@@ -88,10 +127,17 @@ function xmldb_authorcheck_upgrade($oldversion) {
 
     // Add the number-of-questions setting to the activity.
     if ($oldversion < 2026082004) {
-
         $table = new xmldb_table('authorcheck');
-        $numquestions = new xmldb_field('numquestions', XMLDB_TYPE_INTEGER, '3', null,
-            XMLDB_NOTNULL, null, '6', 'flagthreshold');
+        $numquestions = new xmldb_field(
+            'numquestions',
+            XMLDB_TYPE_INTEGER,
+            '3',
+            null,
+            XMLDB_NOTNULL,
+            null,
+            '6',
+            'flagthreshold'
+        );
         if (!$dbman->field_exists($table, $numquestions)) {
             $dbman->add_field($table, $numquestions);
         }
@@ -101,10 +147,17 @@ function xmldb_authorcheck_upgrade($oldversion) {
 
     // Add the submission deadline to the activity.
     if ($oldversion < 2026082005) {
-
         $table = new xmldb_table('authorcheck');
-        $deadline = new xmldb_field('submissiondeadline', XMLDB_TYPE_INTEGER, '10', null,
-            XMLDB_NOTNULL, null, '0', 'numquestions');
+        $deadline = new xmldb_field(
+            'submissiondeadline',
+            XMLDB_TYPE_INTEGER,
+            '10',
+            null,
+            XMLDB_NOTNULL,
+            null,
+            '0',
+            'numquestions'
+        );
         if (!$dbman->field_exists($table, $deadline)) {
             $dbman->add_field($table, $deadline);
         }
@@ -114,10 +167,17 @@ function xmldb_authorcheck_upgrade($oldversion) {
 
     // Add the linked assignment id to the activity.
     if ($oldversion < 2026082006) {
-
         $table = new xmldb_table('authorcheck');
-        $assignmentid = new xmldb_field('assignmentid', XMLDB_TYPE_INTEGER, '10', null,
-            XMLDB_NOTNULL, null, '0', 'submissiondeadline');
+        $assignmentid = new xmldb_field(
+            'assignmentid',
+            XMLDB_TYPE_INTEGER,
+            '10',
+            null,
+            XMLDB_NOTNULL,
+            null,
+            '0',
+            'submissiondeadline'
+        );
         if (!$dbman->field_exists($table, $assignmentid)) {
             $dbman->add_field($table, $assignmentid);
         }
@@ -127,10 +187,17 @@ function xmldb_authorcheck_upgrade($oldversion) {
 
     // Add the no-submission marker to attempts.
     if ($oldversion < 2026082007) {
-
         $table = new xmldb_table('authorcheck_attempts');
-        $nosub = new xmldb_field('nosubmission', XMLDB_TYPE_INTEGER, '1', null,
-            XMLDB_NOTNULL, null, '0', 'flagged');
+        $nosub = new xmldb_field(
+            'nosubmission',
+            XMLDB_TYPE_INTEGER,
+            '1',
+            null,
+            XMLDB_NOTNULL,
+            null,
+            '0',
+            'flagged'
+        );
         if (!$dbman->field_exists($table, $nosub)) {
             $dbman->add_field($table, $nosub);
         }
@@ -140,10 +207,17 @@ function xmldb_authorcheck_upgrade($oldversion) {
 
     // Add the unprocessable-submission marker to attempts.
     if ($oldversion < 2026082009) {
-
         $table = new xmldb_table('authorcheck_attempts');
-        $field = new xmldb_field('unprocessable', XMLDB_TYPE_INTEGER, '1', null,
-            XMLDB_NOTNULL, null, '0', 'nosubmission');
+        $field = new xmldb_field(
+            'unprocessable',
+            XMLDB_TYPE_INTEGER,
+            '1',
+            null,
+            XMLDB_NOTNULL,
+            null,
+            '0',
+            'nosubmission'
+        );
         if (!$dbman->field_exists($table, $field)) {
             $dbman->add_field($table, $field);
         }
@@ -153,17 +227,32 @@ function xmldb_authorcheck_upgrade($oldversion) {
 
     // Add the answer time limit and per-attempt start time.
     if ($oldversion < 2026082011) {
-
         $table = new xmldb_table('authorcheck');
-        $timelimit = new xmldb_field('timelimit', XMLDB_TYPE_INTEGER, '10', null,
-            XMLDB_NOTNULL, null, '0', 'assignmentid');
+        $timelimit = new xmldb_field(
+            'timelimit',
+            XMLDB_TYPE_INTEGER,
+            '10',
+            null,
+            XMLDB_NOTNULL,
+            null,
+            '0',
+            'assignmentid'
+        );
         if (!$dbman->field_exists($table, $timelimit)) {
             $dbman->add_field($table, $timelimit);
         }
 
         $attempts = new xmldb_table('authorcheck_attempts');
-        $timestarted = new xmldb_field('timestarted', XMLDB_TYPE_INTEGER, '10', null,
-            XMLDB_NOTNULL, null, '0', 'unprocessable');
+        $timestarted = new xmldb_field(
+            'timestarted',
+            XMLDB_TYPE_INTEGER,
+            '10',
+            null,
+            XMLDB_NOTNULL,
+            null,
+            '0',
+            'unprocessable'
+        );
         if (!$dbman->field_exists($attempts, $timestarted)) {
             $dbman->add_field($attempts, $timestarted);
         }
@@ -173,10 +262,17 @@ function xmldb_authorcheck_upgrade($oldversion) {
 
     // Add the selectable question types to the activity.
     if ($oldversion < 2026082012) {
-
         $table = new xmldb_table('authorcheck');
-        $field = new xmldb_field('qtypes', XMLDB_TYPE_CHAR, '100', null,
-            XMLDB_NOTNULL, null, 'mcq,truefalse,fillin,open', 'timelimit');
+        $field = new xmldb_field(
+            'qtypes',
+            XMLDB_TYPE_CHAR,
+            '100',
+            null,
+            XMLDB_NOTNULL,
+            null,
+            'mcq,truefalse,fillin,open',
+            'timelimit'
+        );
         if (!$dbman->field_exists($table, $field)) {
             $dbman->add_field($table, $field);
         }

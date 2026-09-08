@@ -15,9 +15,11 @@
 // along with Moodle.  If not, see <https://www.gnu.org/licenses/>.
 
 /**
+ * Reads submissions from a linked assignment.
+ *
  * @package    mod_authorcheck
  * @copyright  2026 Pius Kwao Gadosey <kwaoproj@gmail.com>
- * @license    https://www.gnu.org/licenses/gpl-3.0 GNU GPL v3 or later
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 namespace mod_authorcheck\local;
 
@@ -25,7 +27,6 @@ namespace mod_authorcheck\local;
  * Reads file submissions from a linked assignment.
  */
 class assignment_reader {
-
     /** File extensions we can extract text from. */
     const ACCEPTED = ['pdf', 'docx'];
 
@@ -45,13 +46,26 @@ class assignment_reader {
         }
 
         $assign = $DB->get_record('assign', ['id' => $assignid], '*', MUST_EXIST);
-        $assigncm = get_coursemodule_from_instance('assign', $assignid, $assign->course,
-            false, MUST_EXIST);
+        $assigncm = get_coursemodule_from_instance(
+            'assign',
+            $assignid,
+            $assign->course,
+            false,
+            MUST_EXIST
+        );
         $assigncontext = \context_module::instance($assigncm->id);
 
         // Students who can submit to the assignment (active enrolments).
-        $students = get_enrolled_users($assigncontext, 'mod/assign:submit', 0, 'u.id',
-            null, 0, 0, true);
+        $students = get_enrolled_users(
+            $assigncontext,
+            'mod/assign:submit',
+            0,
+            'u.id',
+            null,
+            0,
+            0,
+            true
+        );
 
         $fs = get_file_storage();
         $result = [];
@@ -74,8 +88,14 @@ class assignment_reader {
                 continue;
             }
 
-            $files = $fs->get_area_files($assigncontext->id, 'assignsubmission_file',
-                'submission_files', $submission->id, 'sortorder, id', false);
+            $files = $fs->get_area_files(
+                $assigncontext->id,
+                'assignsubmission_file',
+                'submission_files',
+                $submission->id,
+                'sortorder, id',
+                false
+            );
 
             $usable = null;
             foreach ($files as $f) {

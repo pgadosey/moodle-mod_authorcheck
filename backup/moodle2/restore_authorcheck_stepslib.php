@@ -15,17 +15,20 @@
 // along with Moodle.  If not, see <https://www.gnu.org/licenses/>.
 
 /**
+ * Restore structure step for the Authorship Check activity.
+ *
  * @package    mod_authorcheck
  * @copyright  2026 Pius Kwao Gadosey <kwaoproj@gmail.com>
- * @license    https://www.gnu.org/licenses/gpl-3.0 GNU GPL v3 or later
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-defined('MOODLE_INTERNAL') || die();
 
 /**
  * Structure step to restore one authorcheck activity.
  */
 class restore_authorcheck_activity_structure_step extends restore_activity_structure_step {
-
+    /**
+     * Define the restore structure.
+     */
     protected function define_structure() {
         $paths = [];
         $userinfo = $this->get_setting_value('userinfo');
@@ -33,17 +36,26 @@ class restore_authorcheck_activity_structure_step extends restore_activity_struc
         $paths[] = new restore_path_element('authorcheck', '/activity/authorcheck');
 
         if ($userinfo) {
-            $paths[] = new restore_path_element('authorcheck_attempt',
-                '/activity/authorcheck/attempts/attempt');
-            $paths[] = new restore_path_element('authorcheck_question',
-                '/activity/authorcheck/attempts/attempt/questions/question');
-            $paths[] = new restore_path_element('authorcheck_response',
-                '/activity/authorcheck/attempts/attempt/responses/response');
+            $paths[] = new restore_path_element(
+                'authorcheck_attempt',
+                '/activity/authorcheck/attempts/attempt'
+            );
+            $paths[] = new restore_path_element(
+                'authorcheck_question',
+                '/activity/authorcheck/attempts/attempt/questions/question'
+            );
+            $paths[] = new restore_path_element(
+                'authorcheck_response',
+                '/activity/authorcheck/attempts/attempt/responses/response'
+            );
         }
 
         return $this->prepare_activity_structure($paths);
     }
 
+    /**
+     * Restore an authorcheck instance record.
+     */
     protected function process_authorcheck($data) {
         global $DB;
 
@@ -66,6 +78,9 @@ class restore_authorcheck_activity_structure_step extends restore_activity_struc
         $this->apply_activity_instance($newitemid);
     }
 
+    /**
+     * Restore an attempt record.
+     */
     protected function process_authorcheck_attempt($data) {
         global $DB;
 
@@ -82,6 +97,9 @@ class restore_authorcheck_activity_structure_step extends restore_activity_struc
         $this->set_mapping('authorcheck_attempt', $oldid, $newid);
     }
 
+    /**
+     * Restore a question record.
+     */
     protected function process_authorcheck_question($data) {
         global $DB;
 
@@ -93,6 +111,9 @@ class restore_authorcheck_activity_structure_step extends restore_activity_struc
         $this->set_mapping('authorcheck_question', $oldid, $newid);
     }
 
+    /**
+     * Restore a response record.
+     */
     protected function process_authorcheck_response($data) {
         global $DB;
 

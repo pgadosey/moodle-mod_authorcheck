@@ -15,9 +15,11 @@
 // along with Moodle.  If not, see <https://www.gnu.org/licenses/>.
 
 /**
+ * Shared processing loop for generating questions.
+ *
  * @package    mod_authorcheck
  * @copyright  2026 Pius Kwao Gadosey <kwaoproj@gmail.com>
- * @license    https://www.gnu.org/licenses/gpl-3.0 GNU GPL v3 or later
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 namespace mod_authorcheck\local;
 
@@ -25,7 +27,6 @@ namespace mod_authorcheck\local;
  * Processes an activity's linked-assignment submissions into questions.
  */
 class processor {
-
     /**
      * Process one activity instance.
      *
@@ -57,8 +58,12 @@ class processor {
 
         foreach ($reader->get_submissions($instance) as $s) {
             $attemptid = $storage->get_or_create_attempt((int) $instance->id, $s->userid);
-            $attempt = $DB->get_record('authorcheck_attempts', ['id' => $attemptid],
-                'timegenerated, nosubmission, unprocessable', MUST_EXIST);
+            $attempt = $DB->get_record(
+                'authorcheck_attempts',
+                ['id' => $attemptid],
+                'timegenerated, nosubmission, unprocessable',
+                MUST_EXIST
+            );
             $hasquestions = ((int) $attempt->timegenerated > 0);
 
             // Already has questions: leave it alone in incremental mode.

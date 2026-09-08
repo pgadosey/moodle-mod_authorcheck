@@ -15,9 +15,11 @@
 // along with Moodle.  If not, see <https://www.gnu.org/licenses/>.
 
 /**
+ * Objective-answer grading for the Authorship Check activity.
+ *
  * @package    mod_authorcheck
  * @copyright  2026 Pius Kwao Gadosey <kwaoproj@gmail.com>
- * @license    https://www.gnu.org/licenses/gpl-3.0 GNU GPL v3 or later
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 namespace mod_authorcheck\local;
 
@@ -25,7 +27,6 @@ namespace mod_authorcheck\local;
  * Objective-answer grader.
  */
 class grader {
-
     /**
      * Grade a single response.
      *

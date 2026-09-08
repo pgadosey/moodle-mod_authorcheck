@@ -15,9 +15,11 @@
 // along with Moodle.  If not, see <https://www.gnu.org/licenses/>.
 
 /**
+ * Attempt, question and response storage for mod_authorcheck.
+ *
  * @package    mod_authorcheck
  * @copyright  2026 Pius Kwao Gadosey <kwaoproj@gmail.com>
- * @license    https://www.gnu.org/licenses/gpl-3.0 GNU GPL v3 or later
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 namespace mod_authorcheck\local;
 
@@ -27,11 +29,13 @@ namespace mod_authorcheck\local;
  * Table names are passed WITHOUT the site prefix; Moodle's $DB layer adds it.
  */
 class attempt_storage {
-
     /** Attempt lifecycle states (stored in authorcheck_attempts.status). */
     const STATUS_NOTSTARTED = 0;
+    /** In-progress attempt. */
     const STATUS_INPROGRESS = 1;
+    /** Submitted attempt. */
     const STATUS_SUBMITTED  = 2;
+    /** Reviewed attempt. */
     const STATUS_REVIEWED   = 3;
 
     /** Below this fraction of objective questions correct, the attempt is flagged. */
@@ -132,8 +136,11 @@ class attempt_storage {
     public function get_questions(int $attemptid): array {
         global $DB;
 
-        $records = $DB->get_records('authorcheck_questions',
-            ['attemptid' => $attemptid], 'sortorder ASC');
+        $records = $DB->get_records(
+            'authorcheck_questions',
+            ['attemptid' => $attemptid],
+            'sortorder ASC'
+        );
 
         $questions = [];
         foreach ($records as $r) {
@@ -158,13 +165,21 @@ class attempt_storage {
      * @param array $questions Questions from get_questions() (carry answer keys).
      * @return \stdClass Summary: score, maxscore, flagged.
      */
-    public function save_and_grade(int $attemptid, \stdClass $formdata, array $questions,
-            int $thresholdpercent = 50): \stdClass {
+    public function save_and_grade(
+        int $attemptid,
+        \stdClass $formdata,
+        array $questions,
+        int $thresholdpercent = 50
+    ): \stdClass {
         global $DB;
 
         // Current attempts-used, so we can increment it.
-        $current = $DB->get_record('authorcheck_attempts', ['id' => $attemptid],
-            'attemptsused', MUST_EXIST);
+        $current = $DB->get_record(
+            'authorcheck_attempts',
+            ['id' => $attemptid],
+            'attemptsused',
+            MUST_EXIST
+        );
         $used = (int) $current->attemptsused;
 
         $correct = 0;   // Objective questions answered correctly.

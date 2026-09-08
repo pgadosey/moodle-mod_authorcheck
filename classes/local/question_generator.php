@@ -15,9 +15,11 @@
 // along with Moodle.  If not, see <https://www.gnu.org/licenses/>.
 
 /**
+ * Generates questions from submission text via the AI subsystem.
+ *
  * @package    mod_authorcheck
  * @copyright  2026 Pius Kwao Gadosey <kwaoproj@gmail.com>
- * @license    https://www.gnu.org/licenses/gpl-3.0 GNU GPL v3 or later
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 namespace mod_authorcheck\local;
 
@@ -25,7 +27,6 @@ namespace mod_authorcheck\local;
  * Generates comprehension questions from submission text via Moodle's AI subsystem.
  */
 class question_generator {
-
     /** @var int Hard cap on how much source text we send to the model. */
     const MAX_SOURCE_CHARS = 8000;
 
@@ -38,9 +39,13 @@ class question_generator {
      * @param int|null $userid User the action runs as (defaults to admin).
      * @return array List of question arrays, each with: type, question, options, answer.
      */
-    public function generate(string $sourcetext, int $numquestions = 6,
-            array $allowedtypes = ['mcq', 'truefalse', 'fillin', 'open'],
-            ?int $contextid = null, ?int $userid = null): array {
+    public function generate(
+        string $sourcetext,
+        int $numquestions = 6,
+        array $allowedtypes = ['mcq', 'truefalse', 'fillin', 'open'],
+        ?int $contextid = null,
+        ?int $userid = null
+    ): array {
 
         if (empty($allowedtypes)) {
             $allowedtypes = ['mcq', 'truefalse', 'fillin', 'open'];
@@ -90,10 +95,12 @@ class question_generator {
         $questions = $this->parse_questions($raw);
 
         // Drop any type the model returned that wasn't requested.
-        $questions = array_values(array_filter($questions,
-            function($q) use ($allowedtypes) {
+        $questions = array_values(array_filter(
+            $questions,
+            function ($q) use ($allowedtypes) {
                 return in_array($q['type'], $allowedtypes, true);
-            }));
+            }
+        ));
 
         return $questions;
     }
@@ -105,8 +112,11 @@ class question_generator {
      * @param int $numquestions
      * @return string
      */
-    protected function build_prompt(string $sourcetext, int $numquestions,
-            array $allowedtypes): string {
+    protected function build_prompt(
+        string $sourcetext,
+        int $numquestions,
+        array $allowedtypes
+    ): string {
 
         $typedesc = [
             'mcq'       => '- "mcq": multiple choice, with exactly 4 options and one correct answer',

@@ -15,9 +15,11 @@
 // along with Moodle.  If not, see <https://www.gnu.org/licenses/>.
 
 /**
+ * Student answer form for the Authorship Check activity.
+ *
  * @package    mod_authorcheck
  * @copyright  2026 Pius Kwao Gadosey <kwaoproj@gmail.com>
- * @license    https://www.gnu.org/licenses/gpl-3.0 GNU GPL v3 or later
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 namespace mod_authorcheck\form;
 
@@ -33,7 +35,9 @@ require_once($CFG->libdir . '/formslib.php');
  *   'cmid'      => course-module id (for the hidden id field)
  */
 class answer_form extends \moodleform {
-
+    /**
+     * Define the form elements.
+     */
     protected function definition() {
         $mform = $this->_form;
         $questions = $this->_customdata['questions'];

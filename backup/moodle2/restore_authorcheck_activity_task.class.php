@@ -15,9 +15,11 @@
 // along with Moodle.  If not, see <https://www.gnu.org/licenses/>.
 
 /**
+ * Restore task for the Authorship Check activity.
+ *
  * @package    mod_authorcheck
  * @copyright  2026 Pius Kwao Gadosey <kwaoproj@gmail.com>
- * @license    https://www.gnu.org/licenses/gpl-3.0 GNU GPL v3 or later
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 defined('MOODLE_INTERNAL') || die();
 
@@ -27,14 +29,21 @@ require_once($CFG->dirroot . '/mod/authorcheck/backup/moodle2/restore_authorchec
  * Restore task that provides the steps to restore an authorcheck activity.
  */
 class restore_authorcheck_activity_task extends restore_activity_task {
-
+    /**
+     * Define plugin-specific settings.
+     */
     protected function define_my_settings() {
         // No activity-specific settings.
     }
 
+    /**
+     * Define the restore steps.
+     */
     protected function define_my_steps() {
         $this->add_step(new restore_authorcheck_activity_structure_step(
-            'authorcheck_structure', 'authorcheck.xml'));
+            'authorcheck_structure',
+            'authorcheck.xml'
+        ));
     }
 
     /**
@@ -55,17 +64,29 @@ class restore_authorcheck_activity_task extends restore_activity_task {
      */
     public static function define_decode_rules() {
         $rules = [];
-        $rules[] = new restore_decode_rule('AUTHORCHECKVIEWBYID',
-            '/mod/authorcheck/view.php?id=$1', 'course_module');
-        $rules[] = new restore_decode_rule('AUTHORCHECKINDEX',
-            '/mod/authorcheck/index.php?id=$1', 'course');
+        $rules[] = new restore_decode_rule(
+            'AUTHORCHECKVIEWBYID',
+            '/mod/authorcheck/view.php?id=$1',
+            'course_module'
+        );
+        $rules[] = new restore_decode_rule(
+            'AUTHORCHECKINDEX',
+            '/mod/authorcheck/index.php?id=$1',
+            'course'
+        );
         return $rules;
     }
 
+    /**
+     * Define restore log rules.
+     */
     public static function define_restore_log_rules() {
         return [];
     }
 
+    /**
+     * Define course-level restore log rules.
+     */
     public static function define_restore_log_rules_for_course() {
         return [];
     }

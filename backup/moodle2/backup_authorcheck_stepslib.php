@@ -15,17 +15,20 @@
 // along with Moodle.  If not, see <https://www.gnu.org/licenses/>.
 
 /**
+ * Backup structure step for the Authorship Check activity.
+ *
  * @package    mod_authorcheck
  * @copyright  2026 Pius Kwao Gadosey <kwaoproj@gmail.com>
- * @license    https://www.gnu.org/licenses/gpl-3.0 GNU GPL v3 or later
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-defined('MOODLE_INTERNAL') || die();
 
 /**
  * Structure step to back up one authorcheck activity.
  */
 class backup_authorcheck_activity_structure_step extends backup_activity_structure_step {
-
+    /**
+     * Define the backup structure.
+     */
     protected function define_structure() {
 
         // Whether user data is being backed up.
@@ -67,12 +70,18 @@ class backup_authorcheck_activity_structure_step extends backup_activity_structu
 
         // User data only when requested.
         if ($userinfo) {
-            $attempt->set_source_table('authorcheck_attempts',
-                ['authorcheckid' => backup::VAR_PARENTID]);
-            $question->set_source_table('authorcheck_questions',
-                ['attemptid' => backup::VAR_PARENTID]);
-            $response->set_source_table('authorcheck_responses',
-                ['attemptid' => backup::VAR_PARENTID]);
+            $attempt->set_source_table(
+                'authorcheck_attempts',
+                ['authorcheckid' => backup::VAR_PARENTID]
+            );
+            $question->set_source_table(
+                'authorcheck_questions',
+                ['attemptid' => backup::VAR_PARENTID]
+            );
+            $response->set_source_table(
+                'authorcheck_responses',
+                ['attemptid' => backup::VAR_PARENTID]
+            );
         }
 
         // Map the userid so it can be remapped on restore.

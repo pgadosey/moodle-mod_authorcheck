@@ -15,9 +15,11 @@
 // along with Moodle.  If not, see <https://www.gnu.org/licenses/>.
 
 /**
+ * Privacy provider for mod_authorcheck.
+ *
  * @package    mod_authorcheck
  * @copyright  2026 Pius Kwao Gadosey <kwaoproj@gmail.com>
- * @license    https://www.gnu.org/licenses/gpl-3.0 GNU GPL v3 or later
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 namespace mod_authorcheck\privacy;
 
@@ -29,16 +31,14 @@ use core_privacy\local\request\userlist;
 use core_privacy\local\request\writer;
 use core_privacy\local\request\transform;
 
-defined('MOODLE_INTERNAL') || die();
 
 /**
  * Privacy provider for mod_authorcheck.
  */
 class provider implements
-        \core_privacy\local\metadata\provider,
-        \core_privacy\local\request\core_userlist_provider,
-        \core_privacy\local\request\plugin\provider {
-
+    \core_privacy\local\metadata\provider,
+    \core_privacy\local\request\core_userlist_provider,
+    \core_privacy\local\request\plugin\provider {
     /**
      * Describe the personal data stored by this plugin.
      */
@@ -69,8 +69,11 @@ class provider implements
         ], 'privacy:metadata:authorcheck_responses');
 
         // Submission text is sent to the AI subsystem to generate questions.
-        $collection->add_subsystem_link('core_ai', [],
-            'privacy:metadata:core_ai');
+        $collection->add_subsystem_link(
+            'core_ai',
+            [],
+            'privacy:metadata:core_ai'
+        );
 
         return $collection;
     }
@@ -142,8 +145,10 @@ class provider implements
                 continue;
             }
 
-            $attempt = $DB->get_record('authorcheck_attempts',
-                ['authorcheckid' => $cm->instance, 'userid' => $userid]);
+            $attempt = $DB->get_record(
+                'authorcheck_attempts',
+                ['authorcheckid' => $cm->instance, 'userid' => $userid]
+            );
             if (!$attempt) {
                 continue;
             }
@@ -161,10 +166,15 @@ class provider implements
                 'questions'     => [],
             ];
 
-            $questions = $DB->get_records('authorcheck_questions',
-                ['attemptid' => $attempt->id], 'sortorder ASC');
-            $responses = $DB->get_records('authorcheck_responses',
-                ['attemptid' => $attempt->id]);
+            $questions = $DB->get_records(
+                'authorcheck_questions',
+                ['attemptid' => $attempt->id],
+                'sortorder ASC'
+            );
+            $responses = $DB->get_records(
+                'authorcheck_responses',
+                ['attemptid' => $attempt->id]
+            );
 
             $respbyq = [];
             foreach ($responses as $r) {
@@ -183,7 +193,9 @@ class provider implements
             }
 
             writer::with_context($context)->export_data(
-                [get_string('pluginname', 'mod_authorcheck')], $export);
+                [get_string('pluginname', 'mod_authorcheck')],
+                $export
+            );
         }
     }
 
@@ -252,7 +264,7 @@ class provider implements
             if (empty($userids)) {
                 return;
             }
-            list($usersql, $userparams) = $DB->get_in_or_equal($userids, SQL_PARAMS_NAMED);
+            [$usersql, $userparams] = $DB->get_in_or_equal($userids, SQL_PARAMS_NAMED);
             $where .= " AND userid $usersql";
             $params += $userparams;
         }
@@ -262,7 +274,7 @@ class provider implements
             return;
         }
 
-        list($insql, $inparams) = $DB->get_in_or_equal($attemptids);
+        [$insql, $inparams] = $DB->get_in_or_equal($attemptids);
         $DB->delete_records_select('authorcheck_responses', "attemptid $insql", $inparams);
         $DB->delete_records_select('authorcheck_questions', "attemptid $insql", $inparams);
         $DB->delete_records_select('authorcheck_attempts', $where, $params);

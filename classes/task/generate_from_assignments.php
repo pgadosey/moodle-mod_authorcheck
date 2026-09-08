@@ -15,9 +15,11 @@
 // along with Moodle.  If not, see <https://www.gnu.org/licenses/>.
 
 /**
+ * Scheduled task to generate questions from assignments.
+ *
  * @package    mod_authorcheck
  * @copyright  2026 Pius Kwao Gadosey <kwaoproj@gmail.com>
- * @license    https://www.gnu.org/licenses/gpl-3.0 GNU GPL v3 or later
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 namespace mod_authorcheck\task;
 
@@ -25,11 +27,16 @@ namespace mod_authorcheck\task;
  * Generate questions from linked-assignment submissions.
  */
 class generate_from_assignments extends \core\task\scheduled_task {
-
+    /**
+     * Return the task display name.
+     */
     public function get_name() {
         return get_string('taskgenerate', 'mod_authorcheck');
     }
 
+    /**
+     * Run the task.
+     */
     public function execute() {
         global $DB;
 

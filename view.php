@@ -15,9 +15,19 @@
 // along with Moodle.  If not, see <https://www.gnu.org/licenses/>.
 
 /**
+ * Student view page for the Authorship Check activity.
+ *
  * @package    mod_authorcheck
  * @copyright  2026 Pius Kwao Gadosey <kwaoproj@gmail.com>
- * @license    https://www.gnu.org/licenses/gpl-3.0 GNU GPL v3 or later
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
+
+/**
+ * Student view page for the Authorship Check activity.
+ *
+ * @package    mod_authorcheck
+ * @copyright  2026 Pius Kwao Gadosey <kwaoproj@gmail.com>
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 require(__DIR__ . '/../../config.php');
 
@@ -54,8 +64,10 @@ if (has_capability('mod/authorcheck:review', $context)) {
 // Only users who can attempt (students) get an attempt and the answer flow.
 // Teachers/others with view access are directed to the review screen instead.
 if (!has_capability('mod/authorcheck:attempt', $context)) {
-    echo $OUTPUT->notification(get_string('notastudent', 'mod_authorcheck'),
-        \core\output\notification::NOTIFY_INFO);
+    echo $OUTPUT->notification(
+        get_string('notastudent', 'mod_authorcheck'),
+        \core\output\notification::NOTIFY_INFO
+    );
     echo $OUTPUT->footer();
     exit;
 }
@@ -68,13 +80,20 @@ $released = \mod_authorcheck\local\release_gate::is_released($instance);
 // PRE-RELEASE: status only. Students submit via the linked assignment.
 // =========================================================================
 if (!$released) {
-    echo $OUTPUT->notification(get_string('awaitingrelease', 'mod_authorcheck'),
-        \core\output\notification::NOTIFY_INFO);
+    echo $OUTPUT->notification(
+        get_string('awaitingrelease', 'mod_authorcheck'),
+        \core\output\notification::NOTIFY_INFO
+    );
 
     // Offer a link to the linked assignment, if one is set.
     if (!empty($instance->assignmentid)) {
-        $assigncm = get_coursemodule_from_instance('assign', $instance->assignmentid,
-            $course->id, false, IGNORE_MISSING);
+        $assigncm = get_coursemodule_from_instance(
+            'assign',
+            $instance->assignmentid,
+            $course->id,
+            false,
+            IGNORE_MISSING
+        );
         if ($assigncm) {
             echo html_writer::div(
                 html_writer::link(
@@ -137,21 +156,35 @@ if ($data = $form->get_data()) {
     if ($remaining > 0) {
         require_capability('mod/authorcheck:attempt', $context);
         $storage->save_and_grade($attempt->id, $data, $questions, (int) $instance->flagthreshold);
-        redirect($PAGE->url, get_string('answersrecorded', 'mod_authorcheck'), null,
-            \core\output\notification::NOTIFY_SUCCESS);
+        redirect(
+            $PAGE->url,
+            get_string('answersrecorded', 'mod_authorcheck'),
+            null,
+            \core\output\notification::NOTIFY_SUCCESS
+        );
     } else {
-        redirect($PAGE->url, get_string('noattemptsleft', 'mod_authorcheck'), null,
-            \core\output\notification::NOTIFY_ERROR);
+        redirect(
+            $PAGE->url,
+            get_string('noattemptsleft', 'mod_authorcheck'),
+            null,
+            \core\output\notification::NOTIFY_ERROR
+        );
     }
 }
 
-echo html_writer::tag('p', get_string('attemptsinfo', 'mod_authorcheck',
-    (object) ['used' => $used, 'max' => $maxattempts]));
+echo html_writer::tag('p', get_string(
+    'attemptsinfo',
+    'mod_authorcheck',
+    (object) ['used' => $used, 'max' => $maxattempts]
+));
 
 if ($used > 0 && $attempt->maxscore !== null) {
     echo $OUTPUT->notification(
-        get_string('lastscore', 'mod_authorcheck',
-            (object) ['score' => (int) $attempt->score, 'maxscore' => (int) $attempt->maxscore]),
+        get_string(
+            'lastscore',
+            'mod_authorcheck',
+            (object) ['score' => (int) $attempt->score, 'maxscore' => (int) $attempt->maxscore]
+        ),
         \core\output\notification::NOTIFY_INFO
     );
 }
@@ -159,12 +192,17 @@ if ($used > 0 && $attempt->maxscore !== null) {
 if ($remaining > 0 && $timeup) {
     // Time expired without a submission: finalise with whatever was saved.
     if ((int) $attempt->status !== \mod_authorcheck\local\attempt_storage::STATUS_SUBMITTED) {
-        $storage->save_and_grade($attempt->id, new \stdClass(), $questions,
-            (int) $instance->flagthreshold);
+        $storage->save_and_grade(
+            $attempt->id,
+            new \stdClass(),
+            $questions,
+            (int) $instance->flagthreshold
+        );
     }
-    echo $OUTPUT->notification(get_string('timeexpired', 'mod_authorcheck'),
-        \core\output\notification::NOTIFY_WARNING);
-
+    echo $OUTPUT->notification(
+        get_string('timeexpired', 'mod_authorcheck'),
+        \core\output\notification::NOTIFY_WARNING
+    );
 } else if ($remaining > 0) {
     // Show a countdown when a time limit applies.
     if ($timelimit > 0) {
@@ -172,7 +210,8 @@ if ($remaining > 0 && $timeup) {
             get_string('timeremaining', 'mod_authorcheck') . ' '
             . html_writer::tag('strong', '', ['id' => 'authorcheck-timer']),
             'authorcheck-timerbox',
-            ['style' => 'margin:0 0 1em;font-size:1.1em;']);
+            ['style' => 'margin:0 0 1em;font-size:1.1em;']
+        );
 
         $PAGE->requires->js_amd_inline("
             require([], function() {
@@ -200,10 +239,11 @@ if ($remaining > 0 && $timeup) {
         ");
     }
     $form->display();
-
 } else {
-    echo $OUTPUT->notification(get_string('noattemptsleft', 'mod_authorcheck'),
-        \core\output\notification::NOTIFY_INFO);
+    echo $OUTPUT->notification(
+        get_string('noattemptsleft', 'mod_authorcheck'),
+        \core\output\notification::NOTIFY_INFO
+    );
 }
 
 echo $OUTPUT->footer();
