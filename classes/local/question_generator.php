@@ -171,7 +171,7 @@ PROMPT;
     protected function parse_questions(string $raw): array {
         $text = trim($raw);
 
-        // Strip ```json ... ``` or ``` ... ``` fences if present.
+        // Strip any Markdown code-fence markers the model may have added.
         $text = preg_replace('/^```(?:json)?\s*/i', '', $text);
         $text = preg_replace('/\s*```$/', '', $text);
 

@@ -31,9 +31,9 @@
  */
 require(__DIR__ . '/../../config.php');
 
-$id = required_param('id', PARAM_INT);              // course-module id
-$attemptid = optional_param('attempt', 0, PARAM_INT); // present => detail mode
-$action = optional_param('action', '', PARAM_ALPHA);  // setflag | clearflag
+$id = required_param('id', PARAM_INT);              // Course-module id.
+$attemptid = optional_param('attempt', 0, PARAM_INT); // Present => detail mode.
+$action = optional_param('action', '', PARAM_ALPHA);  // Setflag | clearflag.
 
 $cm = get_coursemodule_from_id('authorcheck', $id, 0, false, MUST_EXIST);
 $course = $DB->get_record('course', ['id' => $cm->course], '*', MUST_EXIST);
@@ -69,7 +69,7 @@ if ($action && $attemptid && confirm_sesskey()) {
 echo $OUTPUT->header();
 
 if ($attemptid) {
-    // ======================= DETAIL MODE ===================================
+    // ...======================= DETAIL MODE ===================================
     $attempt = $DB->get_record(
         'authorcheck_attempts',
         ['id' => $attemptid, 'authorcheckid' => $instance->id],
@@ -162,7 +162,7 @@ if ($attemptid) {
 
     echo html_writer::link($baseurl, get_string('backtolist', 'mod_authorcheck'));
 } else {
-    // ======================= LIST MODE =====================================
+    // ...======================= LIST MODE =====================================
     echo $OUTPUT->heading(get_string('reviewheading', 'mod_authorcheck'));
 
     // Only genuine students (users with the attempt capability) — never

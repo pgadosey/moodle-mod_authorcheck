@@ -21,7 +21,6 @@
  * @copyright  2026 Pius Kwao Gadosey <kwaoproj@gmail.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-defined('MOODLE_INTERNAL') || die();
 
 /**
  * Upgrade the mod_authorcheck database.
@@ -70,7 +69,7 @@ function xmldb_authorcheck_upgrade($oldversion) {
 
     // Add attempt-limit fields.
     if ($oldversion < 2026082002) {
-        // maxattempts on the activity.
+        // Maxattempts on the activity.
         $table = new xmldb_table('authorcheck');
         $maxattempts = new xmldb_field(
             'maxattempts',
@@ -86,7 +85,7 @@ function xmldb_authorcheck_upgrade($oldversion) {
             $dbman->add_field($table, $maxattempts);
         }
 
-        // attemptsused on each student's attempt row.
+        // Attempts used on each student's attempt row.
         $attemptstable = new xmldb_table('authorcheck_attempts');
         $attemptsused = new xmldb_field(
             'attemptsused',

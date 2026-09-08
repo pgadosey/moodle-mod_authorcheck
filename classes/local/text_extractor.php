@@ -100,7 +100,7 @@ class text_extractor {
      * @return string
      */
     protected function run_pdftotext(string $path): string {
-        // -q quiet, -nopgbrk no page-break chars, '-' write to stdout.
+        // Options: -q quiet, -nopgbrk removes page-break chars, '-' writes to stdout.
         $cmd = 'pdftotext -q -nopgbrk ' . escapeshellarg($path) . ' -';
         return $this->run_command($cmd);
     }

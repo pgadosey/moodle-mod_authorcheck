@@ -31,7 +31,7 @@
  */
 require(__DIR__ . '/../../config.php');
 
-$id = required_param('id', PARAM_INT); // course-module id
+$id = required_param('id', PARAM_INT); // Course-module id.
 
 $cm = get_coursemodule_from_id('authorcheck', $id, 0, false, MUST_EXIST);
 $course = $DB->get_record('course', ['id' => $cm->course], '*', MUST_EXIST);
@@ -76,7 +76,7 @@ $storage = new \mod_authorcheck\local\attempt_storage();
 $attemptid = $storage->get_or_create_attempt($instance->id, $USER->id);
 $released = \mod_authorcheck\local\release_gate::is_released($instance);
 
-// =========================================================================
+// ... =========================================================================
 // PRE-RELEASE: status only. Students submit via the linked assignment.
 // =========================================================================
 if (!$released) {
@@ -108,7 +108,7 @@ if (!$released) {
     exit;
 }
 
-// =========================================================================
+// ... =========================================================================
 // RELEASED: answering phase.
 // =========================================================================
 $attempt = $DB->get_record('authorcheck_attempts', ['id' => $attemptid], '*', MUST_EXIST);
@@ -133,7 +133,7 @@ $used = (int) $attempt->attemptsused;
 $remaining = $maxattempts - $used;
 
 // Timer bookkeeping: stamp the start on first view, compute time left.
-$timelimit = (int) $instance->timelimit; // minutes
+$timelimit = (int) $instance->timelimit; // Minutes.
 $timeup = false;
 $remainingsecs = 0;
 if ($timelimit > 0 && $remaining > 0) {

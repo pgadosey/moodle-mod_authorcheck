@@ -26,6 +26,6 @@ defined('MOODLE_INTERNAL') || die();
 
 $plugin->component = 'mod_authorcheck';
 $plugin->release = '0.1.0';
-$plugin->version = 2026082012;
+$plugin->version = 2026090800;
 $plugin->requires = 2025041409;
 $plugin->maturity = MATURITY_ALPHA;
