@@ -1,0 +1,5 @@
+.DS_Store
+*.bak
+cli/testextract.php
+cli/testgenerate.php
+cli/testpersist.php

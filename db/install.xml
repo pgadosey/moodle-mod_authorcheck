@@ -1,0 +1,91 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<XMLDB PATH="mod/authorcheck/db" VERSION="20260820" COMMENT="XMLDB file for Moodle mod_authorcheck"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:noNamespaceSchemaLocation="../../../lib/xmldb/xmldb.xsd"
+>
+  <TABLES>
+    <TABLE NAME="authorcheck" COMMENT="Stores the authorcheck activity module instances.">
+      <FIELDS>
+        <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="true"/>
+        <FIELD NAME="course" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="false" COMMENT="ID of the course this activity is part of."/>
+        <FIELD NAME="name" TYPE="char" LENGTH="255" NOTNULL="true" SEQUENCE="false" COMMENT="The name of the activity module instance"/>
+        <FIELD NAME="timecreated" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false" COMMENT="Timestamp of when the instance was added to the course."/>
+        <FIELD NAME="timemodified" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false" COMMENT="Timestamp of when the instance was last modified."/>
+        <FIELD NAME="intro" TYPE="text" NOTNULL="false" SEQUENCE="false" COMMENT="Activity description."/>
+        <FIELD NAME="introformat" TYPE="int" LENGTH="4" NOTNULL="true" DEFAULT="0" SEQUENCE="false" COMMENT="The format of the intro field."/>
+        <FIELD NAME="releasetime" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false" COMMENT="Unix time at which questions auto-release. 0 = no scheduled release."/>
+        <FIELD NAME="manualreleased" TYPE="int" LENGTH="1" NOTNULL="true" DEFAULT="0" SEQUENCE="false" COMMENT="1 = lecturer has manually released questions now, overriding the schedule."/>
+        <FIELD NAME="maxattempts" TYPE="int" LENGTH="2" NOTNULL="true" DEFAULT="1" SEQUENCE="false" COMMENT="How many times a student may submit answers (1-3)."/>
+        <FIELD NAME="flagthreshold" TYPE="int" LENGTH="3" NOTNULL="true" DEFAULT="50" SEQUENCE="false" COMMENT="Percent of objective questions a student must reach to avoid being flagged."/>
+        <FIELD NAME="numquestions" TYPE="int" LENGTH="3" NOTNULL="true" DEFAULT="6" SEQUENCE="false" COMMENT="How many questions to generate from the submission (3-12)."/>
+        <FIELD NAME="submissiondeadline" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false" COMMENT="Unix time upload cutoff. After this, questions are generated. 0 = no deadline."/>
+        <FIELD NAME="assignmentid" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false" COMMENT="Linked mod_assign instance id to draw submissions from. 0 = none."/>
+        <FIELD NAME="timelimit" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false" COMMENT="Answer time limit in minutes once a student starts. 0 = no limit."/>
+        <FIELD NAME="qtypes" TYPE="char" LENGTH="100" NOTNULL="true" DEFAULT="mcq,truefalse,fillin,open" SEQUENCE="false" COMMENT="Comma-separated question types to generate."/>
+      </FIELDS>
+      <KEYS>
+        <KEY NAME="primary" TYPE="primary" FIELDS="id"/>
+        <KEY NAME="fk_course" TYPE="foreign" FIELDS="course" REFTABLE="course" REFFIELDS="id"/>
+      </KEYS>
+    </TABLE>
+    <TABLE NAME="authorcheck_attempts" COMMENT="One row per student per activity: score and authorship flag">
+      <FIELDS>
+        <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="true"/>
+        <FIELD NAME="authorcheckid" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="false" COMMENT="FK to authorcheck instance"/>
+        <FIELD NAME="userid" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="false" COMMENT="FK to the student"/>
+        <FIELD NAME="status" TYPE="int" LENGTH="2" NOTNULL="true" DEFAULT="0" SEQUENCE="false" COMMENT="0=notstarted 1=inprogress 2=submitted 3=reviewed"/>
+        <FIELD NAME="attemptsused" TYPE="int" LENGTH="4" NOTNULL="true" DEFAULT="0" SEQUENCE="false" COMMENT="Number of times the student has submitted answers."/>
+        <FIELD NAME="score" TYPE="number" LENGTH="10" DECIMALS="5" NOTNULL="false" SEQUENCE="false" COMMENT="Computed objective score"/>
+        <FIELD NAME="maxscore" TYPE="number" LENGTH="10" DECIMALS="5" NOTNULL="false" SEQUENCE="false" COMMENT="Maximum possible objective score"/>
+        <FIELD NAME="flagged" TYPE="int" LENGTH="1" NOTNULL="true" DEFAULT="0" SEQUENCE="false" COMMENT="1 if below authorship threshold"/>
+        <FIELD NAME="nosubmission" TYPE="int" LENGTH="1" NOTNULL="true" DEFAULT="0" SEQUENCE="false" COMMENT="1 if the student made no usable assignment submission."/>
+        <FIELD NAME="unprocessable" TYPE="int" LENGTH="1" NOTNULL="true" DEFAULT="0" SEQUENCE="false" COMMENT="1 if the submitted file yielded no extractable text (e.g. scanned PDF)."/>
+        <FIELD NAME="timestarted" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false" COMMENT="When the student first opened the answer form (timer start)."/>
+        <FIELD NAME="timegenerated" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false" COMMENT="When questions were generated"/>
+        <FIELD NAME="timemodified" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false"/>
+      </FIELDS>
+      <KEYS>
+        <KEY NAME="primary" TYPE="primary" FIELDS="id"/>
+        <KEY NAME="fk_authorcheckid" TYPE="foreign" FIELDS="authorcheckid" REFTABLE="authorcheck" REFFIELDS="id"/>
+        <KEY NAME="fk_userid" TYPE="foreign" FIELDS="userid" REFTABLE="user" REFFIELDS="id"/>
+      </KEYS>
+      <INDEXES>
+        <INDEX NAME="authorcheckid-userid" UNIQUE="true" FIELDS="authorcheckid, userid"/>
+      </INDEXES>
+    </TABLE>
+    <TABLE NAME="authorcheck_questions" COMMENT="Generated questions belonging to an attempt">
+      <FIELDS>
+        <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="true"/>
+        <FIELD NAME="attemptid" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="false" COMMENT="FK to authorcheck_attempts"/>
+        <FIELD NAME="qtype" TYPE="char" LENGTH="20" NOTNULL="true" SEQUENCE="false" COMMENT="mcq|truefalse|fillin|open"/>
+        <FIELD NAME="questiontext" TYPE="text" NOTNULL="true" SEQUENCE="false"/>
+        <FIELD NAME="options" TYPE="text" NOTNULL="false" SEQUENCE="false" COMMENT="JSON array of choices for mcq"/>
+        <FIELD NAME="answerkey" TYPE="text" NOTNULL="false" SEQUENCE="false" COMMENT="Correct answer; null for open"/>
+        <FIELD NAME="sortorder" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false"/>
+      </FIELDS>
+      <KEYS>
+        <KEY NAME="primary" TYPE="primary" FIELDS="id"/>
+        <KEY NAME="fk_attemptid" TYPE="foreign" FIELDS="attemptid" REFTABLE="authorcheck_attempts" REFFIELDS="id"/>
+      </KEYS>
+    </TABLE>
+    <TABLE NAME="authorcheck_responses" COMMENT="A student's answer to each question">
+      <FIELDS>
+        <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="true"/>
+        <FIELD NAME="attemptid" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="false"/>
+        <FIELD NAME="questionid" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="false"/>
+        <FIELD NAME="response" TYPE="text" NOTNULL="false" SEQUENCE="false" COMMENT="Student's submitted answer"/>
+        <FIELD NAME="score" TYPE="number" LENGTH="10" DECIMALS="5" NOTNULL="false" SEQUENCE="false"/>
+        <FIELD NAME="iscorrect" TYPE="int" LENGTH="2" NOTNULL="false" SEQUENCE="false" COMMENT="1 correct, 0 incorrect, null for ungraded open"/>
+        <FIELD NAME="timemodified" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false"/>
+      </FIELDS>
+      <KEYS>
+        <KEY NAME="primary" TYPE="primary" FIELDS="id"/>
+        <KEY NAME="fk_attemptid" TYPE="foreign" FIELDS="attemptid" REFTABLE="authorcheck_attempts" REFFIELDS="id"/>
+        <KEY NAME="fk_questionid" TYPE="foreign" FIELDS="questionid" REFTABLE="authorcheck_questions" REFFIELDS="id"/>
+      </KEYS>
+      <INDEXES>
+        <INDEX NAME="attemptid-questionid" UNIQUE="true" FIELDS="attemptid, questionid"/>
+      </INDEXES>
+    </TABLE>
+  </TABLES>
+</XMLDB>
